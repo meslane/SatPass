@@ -5,12 +5,12 @@ from datetime import datetime
 import pytz
 import tzlocal
 
-k = open('key.txt', 'r')
-key = "&apiKey=" + k.read().strip()
-k.close()
 url = "https://www.n2yo.com/rest/v1/satellite" 
 
 local_tz = tzlocal.get_localzone()
+
+with open('key.txt', 'r') as k:
+    key = "&apiKey=" + k.read().strip()
 
 with open('tracked_satellites.txt') as s:
     satellites = s.read().splitlines()
