@@ -15,16 +15,17 @@ with open('key.txt', 'r') as k:
 with open('tracked_satellites.txt') as s:
     satellites = s.read().splitlines()
     
-with open('location.txt') as l:
-    locdata = l.read().splitlines()
+with open('configs.txt') as c:
+    locdata = c.read().splitlines()
     lat     = str(locdata[0])
     long    = str(locdata[1])
     alt     = str(locdata[2])
-    mindegs = str(locdata[3])
+    days    = str(locdata[3])
+    mindegs = str(locdata[4])
 
 for id in satellites:
     try:
-        query = url + "/radiopasses/{}/{}/{}/{}/1/{}".format(id,lat,long,lat,mindegs) + key
+        query = url + "/radiopasses/{}/{}/{}/{}/{}/{}".format(id,lat,long,alt,days,mindegs) + key
         page = urlopen(query).read()
         data = json.loads(page)
     except urllib.error.URLError:
@@ -43,8 +44,13 @@ for id in satellites:
             startutc = datetime.utcfromtimestamp(int(data["passes"][i]["startUTC"]))
             start = startutc.replace(tzinfo=pytz.utc).astimezone(local_tz).strftime('%Y-%m-%d %I:%M %p')
             elev = float(data["passes"][i]["maxEl"])
-            dir = str(data["passes"][i]["startAzCompass"])
-            print("{0}, {1:.2f} DEG {2}".format(start, elev, dir))
+            saz = float(data["passes"][i]["startAz"]) 
+            sazc = str(data["passes"][i]["startAzCompass"])
+            maz = float(data["passes"][i]["maxAz"])
+            mazc = str(data["passes"][i]["maxAzCompass"])
+            eaz = float(data["passes"][i]["endAz"])
+            eazc = str(data["passes"][i]["endAzCompass"])
+            print("{0}, START: {1:06.2f} DEG {2} MAX: {3:06.2f} DEG {4} ELEV {5:.2f} DEG END: {6:06.2f} DEG {7}".format(start, saz, sazc.ljust(3), maz, mazc.ljust(3), elev, eaz, eazc.ljust(3)))
             i+=1
         except (IndexError, KeyError) as e:
             break
