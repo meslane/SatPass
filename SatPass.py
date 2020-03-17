@@ -36,7 +36,7 @@ for id in satellites:
     name = str(data["info"]["satname"])
     passes = str(data["info"]["passescount"])
     
-    print("{} - {} passes:".format(name,passes))
+    print("{} ({}) - {} passes:".format(name, id, passes))
     
     i = 0
     while 1:
